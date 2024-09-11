@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
-import chromium from "chrome-aws-lambda";
+import puppeteer from "puppeteer";
 import * as htmlToImage from "html-to-image";
-import { nanoid } from "nanoid";
 
 const PORT = process.env.PORT;
 
@@ -14,11 +13,8 @@ app.use(express.json());
 
 app.get("/api/image", async (req, res) => {
   let browser;
-  console.log(chromium.args)
-  console.log(await chromium.executablePath)
-  console.log("test", nanoid())
   try {
-    browser = await chromium.puppeteer.launch({
+    browser = await puppeteer.launch({
       args: [
         "--disable-web-security",
         "--disable-features=IsolateOrigins",
@@ -27,9 +23,6 @@ app.get("/api/image", async (req, res) => {
         "--disable-setuid-sandbox",
       ],
       ignoreDefaultArgs: ["--disable-extensions"],
-      headless: true,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
     });
     const page = await browser.newPage();
     await page.setContent(`
